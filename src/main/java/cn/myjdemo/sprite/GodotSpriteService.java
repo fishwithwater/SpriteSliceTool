@@ -3,8 +3,11 @@ package cn.myjdemo.sprite;
 import cn.myjdemo.domain.Rect2;
 
 import java.awt.image.BufferedImage;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author fishwithwater
@@ -13,55 +16,53 @@ import java.util.concurrent.*;
  **/
 public class GodotSpriteService implements SpriteService {
 
-    private final int THREAD_NUM = 1;
-
-    ExecutorService executor = new ThreadPoolExecutor(THREAD_NUM, THREAD_NUM, 1000L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+    ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public static boolean isPixelOpaque(int pixel) {
         int alpha = (pixel >> 24) & 0xFF;
-        return alpha > 0;
+        return alpha > 1;
     }
 
     @Override
     public CompletableFuture<List<Rect2>> processSplitSpriteSheet(BufferedImage image) {
 
-        return CompletableFuture.supplyAsync(()->{
-            List<Rect2> autosliceCache = new ArrayList<>();
+        return CompletableFuture.supplyAsync(() -> {
+            List<Rect2> autoSliceCache = new ArrayList<>();
 
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
                     if (isPixelOpaque(image.getRGB(x, y))) {
                         boolean found = false;
                         Rect2 expandedRect = null;
-                        for (Rect2 rect : autosliceCache) {
+                        for (Rect2 rect : autoSliceCache) {
                             Rect2 grown = rect.grow(1.5); // 注意：grow方法需要自定义实现
                             if (grown.contains(x, y)) {
                                 rect.expandTo(x, y);
                                 rect.expandTo(x + 1, y + 1);
-                                x = (int)(rect.getX() + rect.getWidth() - 1); // 注意：Rectangle的属性名可能不同，这里假设使用x和width
+                                x = (int) (rect.getX() + rect.getWidth() - 1); // 注意：Rectangle的属性名可能不同，这里假设使用x和width
                                 expandedRect = rect;
                                 found = true;
                                 break;
                             }
                         }
                         if (found) {
-                            mergeOverlappingRectangles(expandedRect, autosliceCache);
+                            mergeOverlappingRectangles(expandedRect, autoSliceCache);
                         } else {
-                            autosliceCache.add(new Rect2(x, y, 1, 1));
+                            autoSliceCache.add(new Rect2(x, y, 1, 1));
                         }
                     }
                 }
             }
-            return autosliceCache;
+            return autoSliceCache;
         }, executor);
     }
 
-    private void mergeOverlappingRectangles(Rect2 expandedRect, List<Rect2> autosliceCache) {
+    private void mergeOverlappingRectangles(Rect2 expandedRect, List<Rect2> autoSliceCache) {
         boolean merged = true;
         while (merged) {
             merged = false;
             ArrayList<Rect2> toRemove = new ArrayList<>();
-            for (Rect2 otherRect : autosliceCache) {
+            for (Rect2 otherRect : autoSliceCache) {
                 if (expandedRect.equals(otherRect)) {
                     continue;
                 }
@@ -72,7 +73,7 @@ public class GodotSpriteService implements SpriteService {
                     merged = true;
                 }
             }
-            autosliceCache.removeAll(toRemove);
+            autoSliceCache.removeAll(toRemove);
         }
     }
 }

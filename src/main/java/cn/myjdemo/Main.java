@@ -2,7 +2,8 @@ package cn.myjdemo;
 
 import cn.myjdemo.ui.MainFrame;
 
-import javax.swing.*;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * @author fishwithwater
@@ -10,12 +11,13 @@ import javax.swing.*;
  * @description
  **/
 public class Main {
-    private static String theme = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
 
     public static void main(String[] args) {
         try {
+            String theme = "javax.swing.plaf.nimbus.NimbusLookAndFeel";
             UIManager.setLookAndFeel(theme);
-        } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
+        } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException |
+                 IllegalAccessException e) {
             e.printStackTrace();
         }
         new MainFrame();

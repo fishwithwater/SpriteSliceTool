@@ -13,17 +13,16 @@ import java.util.List;
  * @description from <a href="https://github.com/var-rain/SpriteSplit/blob/master/src/com/fx/software/spritesplit/utili/ReaderImage.java">SpriteSplit</a>
  **/
 public class SimpleSpriteSplicer {
-    private BufferedImage image;
-    private int width;
-    private int height;
-    private int minx;
-    private int miny;
+    private final BufferedImage image;
+    private final int width;
+    private final int height;
+    private final int minx;
+    private final int miny;
+    private final List<Rect2> spriteItemList = new ArrayList<>();
     private List<int[]> up;
     private List<int[]> down;
     private List<int[]> left;
     private List<int[]> right;
-
-    private List<Rect2> spriteItemList = new ArrayList<>();
 
     public SimpleSpriteSplicer(BufferedImage image) {
         this.image = image;
@@ -49,14 +48,13 @@ public class SimpleSpriteSplicer {
                 if ((pixel >>> 24) != 0) {
                     initList(x, y);
                     check(right, up, down, left);
-                    int img_x = up.get(0)[0];
-                    int img_y = up.get(0)[1];
-                    int img_w = up.get(up.size() - 1)[0] - up.get(0)[0];
-                    int img_h = down.get(down.size() - 1)[1] - up.get(0)[1];
-//                    outImage(img_x, img_y, img_w, img_h);
+                    int img_x = up.getFirst()[0];
+                    int img_y = up.getFirst()[1];
+                    int img_w = up.getLast()[0] - up.getFirst()[0];
+                    int img_h = down.getLast()[1] - up.getFirst()[1];
                     Rect2 spriteItem = new Rect2(img_x, img_y, img_w, img_h);
                     spriteItemList.add(spriteItem);
-                    setAlpha(img_x, img_y, up.get(up.size() - 1)[0], down.get(down.size() - 1)[1]);
+                    setAlpha(img_x, img_y, up.getLast()[0], down.getLast()[1]);
                     removeList();
                     return 1;
                 }
@@ -75,53 +73,53 @@ public class SimpleSpriteSplicer {
         this.left = left;
         this.right = right;
         up.add(new int[]{x, y});
-        up.add(new int[]{up.get(up.size() - 1)[0] + 1, y});
-        up.add(new int[]{up.get(up.size() - 1)[0] + 1, y});
+        up.add(new int[]{up.getLast()[0] + 1, y});
+        up.add(new int[]{up.getLast()[0] + 1, y});
         left.add(new int[]{x, y});
-        left.add(new int[]{x, left.get(left.size() - 1)[1] + 1});
-        left.add(new int[]{x, left.get(left.size() - 1)[1] + 1});
-        down.add(left.get(left.size() - 1));
-        down.add(new int[]{down.get(down.size() - 1)[0] + 1, down.get(down.size() - 1)[1]});
-        down.add(new int[]{down.get(down.size() - 1)[0] + 1, down.get(down.size() - 1)[1]});
-        right.add(up.get(up.size() - 1));
-        right.add(new int[]{right.get(right.size() - 1)[0], right.get(right.size() - 1)[1] + 1});
-        right.add(new int[]{right.get(right.size() - 1)[0], right.get(right.size() - 1)[1] + 1});
+        left.add(new int[]{x, left.getLast()[1] + 1});
+        left.add(new int[]{x, left.getLast()[1] + 1});
+        down.add(left.getLast());
+        down.add(new int[]{down.getLast()[0] + 1, down.getLast()[1]});
+        down.add(new int[]{down.getLast()[0] + 1, down.getLast()[1]});
+        right.add(up.getLast());
+        right.add(new int[]{right.getLast()[0], right.getLast()[1] + 1});
+        right.add(new int[]{right.getLast()[0], right.getLast()[1] + 1});
     }
 
     private void removeList() {
-        for (int i = 0; i < up.size(); i++) up.remove(i);
-        for (int i = 0; i < down.size(); i++) down.remove(i);
-        for (int i = 0; i < left.size(); i++) left.remove(i);
-        for (int i = 0; i < right.size(); i++) right.remove(i);
+        up.clear();
+        down.clear();
+        left.clear();
+        right.clear();
     }
 
     private void add_up() {
-        left.add(0, new int[]{left.get(0)[0], left.get(0)[1] - 1});
-        right.add(0, new int[]{right.get(0)[0], right.get(0)[1] - 1});
+        left.addFirst(new int[]{left.getFirst()[0], left.getFirst()[1] - 1});
+        right.addFirst(new int[]{right.getFirst()[0], right.getFirst()[1] - 1});
         for (int[] ints : up) {
             ints[1] = ints[1] - 1;
         }
     }
 
     private void add_down() {
-        left.add(new int[]{left.get(left.size() - 1)[0], left.get(left.size() - 1)[1] + 1});
-        right.add(new int[]{right.get(right.size() - 1)[0], right.get(right.size() - 1)[1] + 1});
+        left.add(new int[]{left.getLast()[0], left.getLast()[1] + 1});
+        right.add(new int[]{right.getLast()[0], right.getLast()[1] + 1});
         for (int[] ints : down) {
             ints[1] = ints[1] + 1;
         }
     }
 
     private void add_left() {
-        up.add(0, new int[]{up.get(0)[0] - 1, up.get(0)[1]});
-        down.add(0, new int[]{down.get(0)[0] - 1, down.get(0)[1]});
+        up.addFirst(new int[]{up.getFirst()[0] - 1, up.getFirst()[1]});
+        down.addFirst(new int[]{down.getFirst()[0] - 1, down.getFirst()[1]});
         for (int[] ints : left) {
             ints[0] = ints[0] - 1;
         }
     }
 
     private void add_right() {
-        up.add(new int[]{up.get(up.size() - 1)[0] + 1, up.get(up.size() - 1)[1]});
-        down.add(new int[]{down.get(down.size() - 1)[0] + 1, down.get(down.size() - 1)[1]});
+        up.add(new int[]{up.getLast()[0] + 1, up.getLast()[1]});
+        down.add(new int[]{down.getLast()[0] + 1, down.getLast()[1]});
         for (int[] ints : right) {
             ints[0] = ints[0] + 1;
         }

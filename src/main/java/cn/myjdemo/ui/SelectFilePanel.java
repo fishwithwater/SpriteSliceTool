@@ -1,10 +1,11 @@
 package cn.myjdemo.ui;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import java.awt.*;
+import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.function.Consumer;
  * @date 2024/7/18 16:36
  * @description
  **/
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class SelectFilePanel extends JPanel {
 
@@ -35,10 +37,7 @@ public class SelectFilePanel extends JPanel {
             chooser.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File f) {
-                    if (f.isDirectory() || f.getPath().endsWith(".jpg") || f.getPath().endsWith(".png")) {
-                        return true;
-                    }
-                    return false;
+                    return f.isDirectory() || f.getPath().endsWith(".jpg") || f.getPath().endsWith(".png");
                 }
 
                 @Override

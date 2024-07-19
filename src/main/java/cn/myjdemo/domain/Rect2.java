@@ -3,7 +3,6 @@ package cn.myjdemo.domain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.awt.Point;
 import java.awt.geom.Point2D;
 
 /**
@@ -74,18 +73,15 @@ public class Rect2 {
     }
 
     public boolean intersects(Rect2 p) {
-        if(x >= (p.x + p.width)){
+        if (x >= (p.x + p.width)) {
             return false;
         }
-        if(y >= (p.y + p.height)){
+        if (y >= (p.y + p.height)) {
             return false;
         }
-        if(p.x >= (x + width)){
+        if (p.x >= (x + width)) {
             return false;
         }
-        if(p.y >= (y + height)){
-            return false;
-        }
-        return true;
+        return !(p.y >= (y + height));
     }
 }

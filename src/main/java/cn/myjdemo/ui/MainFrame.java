@@ -5,8 +5,13 @@ import cn.myjdemo.sprite.SpriteService;
 import cn.myjdemo.sprite.SpriteUtil;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -23,11 +28,7 @@ public class MainFrame extends JFrame {
     private final int WINDOW_WIDTH = 1000;
     private final int WINDOW_HEIGHT = 600;
 
-//    private ImagePanel imagePanel;
-
-    private ImagePanle imagePanel;
-
-    private Rect2 selectedRect;
+    private ImagePanel imagePanel;
 
     private JLabel bottomBarLabel;
 
@@ -54,13 +55,12 @@ public class MainFrame extends JFrame {
                 throw new RuntimeException(e);
             }
             if (imagePanel == null) {
-                imagePanel = new ImagePanle();
+                imagePanel = new ImagePanel();
                 imagePanel.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
                 imagePanel.setMinimumSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
                 imagePanel.setSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
                 imagePanel.updateImage(curBufferedImg);
                 imagePanel.addClickRect2Listener(rect -> {
-                    selectedRect = rect;
                     bottomBarLabel.setText("点击Sprite后显示坐标: " + rect.toString());
                 });
                 jPanel.add(imagePanel, BorderLayout.CENTER);

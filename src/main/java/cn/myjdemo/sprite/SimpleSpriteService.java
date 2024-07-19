@@ -5,7 +5,9 @@ import cn.myjdemo.domain.Rect2;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author fishwithwater
@@ -14,9 +16,7 @@ import java.util.concurrent.*;
  **/
 public class SimpleSpriteService implements SpriteService {
 
-    private final int THREAD_NUM = 4;
-
-    ExecutorService executor = new ThreadPoolExecutor(THREAD_NUM, THREAD_NUM, 1000L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+    ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Override
     public CompletableFuture<List<Rect2>> processSplitSpriteSheet(BufferedImage image) {

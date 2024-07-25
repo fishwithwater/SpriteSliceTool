@@ -1,9 +1,9 @@
-package cn.myjdemo.sprite;
+package cn.myjdemo.sprite.simple;
 
 import cn.myjdemo.domain.Rect2;
+import cn.myjdemo.sprite.SpriteSliceRunner;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +11,10 @@ import java.util.List;
  * @author fishwithwater
  * @date 2024/7/19 11:10
  * @description from <a href="https://github.com/var-rain/SpriteSplit/blob/master/src/com/fx/software/spritesplit/utili/ReaderImage.java">SpriteSplit</a>
+ * @deprecated too slow and not support get process
  **/
-public class SimpleSpriteSplicer {
+@Deprecated
+public class SimpleSpriteSplicer implements SpriteSliceRunner {
     private final BufferedImage image;
     private final int width;
     private final int height;
@@ -23,6 +25,8 @@ public class SimpleSpriteSplicer {
     private List<int[]> down;
     private List<int[]> left;
     private List<int[]> right;
+    private int total = 0;
+    private int current = 0;
 
     public SimpleSpriteSplicer(BufferedImage image) {
         this.image = image;
@@ -30,10 +34,25 @@ public class SimpleSpriteSplicer {
         height = image.getHeight();
         minx = image.getMinX();
         miny = image.getMinY();
+        total = (width - minx - 1) * (height - miny - 1);
         setAlphaLine();
     }
 
-    public List<Rect2> getPixelRGB() throws IOException {
+    @Override
+    public List<Rect2> run(BufferedImage image) {
+        return getPixelRGB();
+    }
+
+    @Override
+    public double getProcess() {
+        if (total == 0 || current == 0) {
+            return 0;
+        }
+        // wrong process
+        return current * 1.0 / total;
+    }
+
+    public List<Rect2> getPixelRGB() {
         while (true) {
             if (readPixel() == -1) {
                 return spriteItemList;
@@ -44,6 +63,7 @@ public class SimpleSpriteSplicer {
     private int readPixel() {
         for (int x = minx; x < width; x++) {
             for (int y = miny; y < height; y++) {
+                current = (height - miny) * (x - minx - 1) + (y - miny);
                 int pixel = image.getRGB(x, y);
                 if ((pixel >>> 24) != 0) {
                     initList(x, y);

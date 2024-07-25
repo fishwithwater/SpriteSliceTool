@@ -1,5 +1,7 @@
 package cn.myjdemo.sprite;
 
+import cn.myjdemo.sprite.godot.GodotSpriteService;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +13,7 @@ import java.util.Map;
  **/
 public class SpriteUtil {
 
-    public static Map<Class<? extends SpriteService>, SpriteService> map = new HashMap<>();
+    public static Map<Class<? extends SpriteService>, SpriteService> SERVICE_MAP = new HashMap<>();
 
     public static SpriteService getSpriteService() {
         return getSpriteService(GodotSpriteService.class);
@@ -22,15 +24,15 @@ public class SpriteUtil {
             clazz = GodotSpriteService.class;
         }
         try {
-            if (!map.containsKey(clazz)) {
-                map.put(clazz, clazz.getConstructor().newInstance());
+            if (!SERVICE_MAP.containsKey(clazz)) {
+                SERVICE_MAP.put(clazz, clazz.getConstructor().newInstance());
             }
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException e) {
             throw new RuntimeException(e);
         }
 
-        return map.get(clazz);
+        return SERVICE_MAP.get(clazz);
     }
 
 }

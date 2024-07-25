@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 /**
  * @author fishwithwater
  * @date 2024/7/19 10:26
- * @description
+ * @description from <a href="https://blog.csdn.net/u012459903/article/details/133757655">Java swing image previewer</a>
  **/
 class ImagePanel extends JPanel {
 
@@ -24,7 +24,6 @@ class ImagePanel extends JPanel {
     private final List<Rect2> rects = new ArrayList<>();
     private final List<Consumer<Rect2>> clickRect2Listeners = new ArrayList<>();
     BufferedImage mSrcBufferedImg = null;
-    // 记录最初原始坐标系，用于清除背景
     AffineTransform mOriginTransform;
     BufferedImage mViewBufferImg;
     Graphics2D mViewG2d;
@@ -38,7 +37,7 @@ class ImagePanel extends JPanel {
     private Integer selectedRectIndex = null;
 
     public ImagePanel() {
-
+        super();
         // 启用双缓存
         setDoubleBuffered(true);
 

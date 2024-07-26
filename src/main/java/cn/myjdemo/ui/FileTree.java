@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  **/
 public class FileTree extends JTree {
 
-    private List<Consumer<ProjectFile>> fileOpenListener = new ArrayList<>();
+    private final List<Consumer<ProjectFile>> fileOpenListener = new ArrayList<>();
 
     public FileTree() {
         super();

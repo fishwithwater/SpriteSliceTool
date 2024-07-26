@@ -6,6 +6,7 @@ import cn.myjdemo.sprite.SpriteUtil;
 import com.github.weisj.darklaf.components.ClosableTabbedPane;
 import com.github.weisj.darklaf.components.TabEvent;
 import com.github.weisj.darklaf.components.TabListener;
+import lombok.Setter;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -24,8 +25,9 @@ import java.util.concurrent.CompletableFuture;
  **/
 public class MainTabPane extends ClosableTabbedPane implements TabListener {
 
-    private Map<File, JPanel> tabPanelMap = new HashMap<>();
+    private final Map<File, JPanel> tabPanelMap = new HashMap<>();
 
+    @Setter
     private MainFrame mainFrameRef;
 
     public MainTabPane() {
@@ -64,7 +66,7 @@ public class MainTabPane extends ClosableTabbedPane implements TabListener {
         rect2ListFuture.whenCompleteAsync((rect2List, throwable) -> {
             if (throwable != null) {
                 throwable.printStackTrace();
-            } else if (imagePanel != null) {
+            } else {
                 imagePanel.updateRects(rect2List);
             }
         });
@@ -87,7 +89,4 @@ public class MainTabPane extends ClosableTabbedPane implements TabListener {
     public void tabClosed(TabEvent tabEvent) {
     }
 
-    public void setMainFrameRef(MainFrame mainFrameRef) {
-        this.mainFrameRef = mainFrameRef;
-    }
 }

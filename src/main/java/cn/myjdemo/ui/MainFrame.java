@@ -7,6 +7,7 @@ import com.github.weisj.darklaf.components.OverlayScrollPane;
 import com.github.weisj.darklaf.components.tabframe.JTabFrame;
 import com.github.weisj.darklaf.iconset.AllIcons;
 import com.github.weisj.darklaf.util.Alignment;
+import lombok.Getter;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -35,11 +36,12 @@ public class MainFrame extends JFrame {
     private final int WINDOW_HEIGHT = 600;
     private final Timer timer = new Timer();
     private MainTabPane mainTabPane;
+    @Getter
     private JLabel bottomBarLabel;
     private MenuBar menuBar;
     private FileTree fileTree;
     private JTabFrame jTabFrame;
-    private LinkedList<File> imageList = new LinkedList<>();
+    private final LinkedList<File> imageList = new LinkedList<>();
 
     public MainFrame() throws HeadlessException {
         super();
@@ -125,7 +127,4 @@ public class MainFrame extends JFrame {
         });
     }
 
-    public JLabel getBottomBarLabel() {
-        return bottomBarLabel;
-    }
 }

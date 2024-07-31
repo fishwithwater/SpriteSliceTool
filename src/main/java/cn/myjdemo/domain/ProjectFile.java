@@ -1,6 +1,7 @@
 package cn.myjdemo.domain;
 
 import lombok.Data;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class ProjectFile {
     private static List<ProjectFile> generateByFolder(File folder) {
         if (folder.isFile()) return new ArrayList<>();
         File[] files = folder.listFiles(file -> file.isDirectory() || file.getName().endsWith(".png"));
-        if (files == null || files.length == 0) return new ArrayList<>();
+        if (ArrayUtils.isEmpty(files)) return new ArrayList<>();
         return generateByFiles(Arrays.asList(files));
     }
 

@@ -1,8 +1,15 @@
 package cn.myjdemo.ui;
 
+import cn.myjdemo.config.AppSetting;
+import cn.myjdemo.config.SettingConstant;
+import cn.myjdemo.i18n.I18nUtil;
 import com.github.weisj.darklaf.iconset.AllIcons;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -10,6 +17,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 /**
@@ -19,9 +27,14 @@ import java.util.function.Consumer;
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Component
+@Lazy
 public class MenuBar extends JMenuBar {
 
     private List<Consumer<List<File>>> fileListeners = new ArrayList<>();
+
+    @Autowired
+    private AppSetting appSetting;
 
     public MenuBar() {
         super();
@@ -31,12 +44,12 @@ public class MenuBar extends JMenuBar {
     }
 
     private void createFileMenu() {
-        JMenu fileMenu = new JMenu("文件");
-        JMenuItem openFileItem = new JMenuItem("打开文件");
+        JMenu fileMenu = new JMenu(I18nUtil.getMessage("file"));
+        JMenuItem openFileItem = new JMenuItem(I18nUtil.getMessage("file.open"));
         openFileItem.setIcon(AllIcons.Files.General.get());
         fileMenu.add(openFileItem);
 
-        JMenuItem openFolderItem = new JMenuItem("打开文件夹");
+        JMenuItem openFolderItem = new JMenuItem(I18nUtil.getMessage("file.folder.open"));
         openFolderItem.setIcon(AllIcons.Files.Folder.get());
         fileMenu.add(openFolderItem);
 
@@ -67,12 +80,13 @@ public class MenuBar extends JMenuBar {
 
             @Override
             public String getDescription() {
-                return folderMode ? "文件夹" : "*.png";
+                return folderMode ? I18nUtil.getMessage("folder") : "*.png";
             }
         });
-        chooser.showDialog(new JLabel(), "选择");
+        chooser.showDialog(new JLabel(), I18nUtil.getMessage("select"));
         File[] selectedFiles = chooser.getSelectedFiles();
-        if (selectedFiles != null && selectedFiles.length > 0) {
+
+        if (ArrayUtils.isNotEmpty(selectedFiles)) {
             notifyFileChange(Arrays.stream(selectedFiles).toList());
         } else if (chooser.getSelectedFile() != null) {
             notifyFileChange(List.of(chooser.getSelectedFile()));
@@ -80,11 +94,38 @@ public class MenuBar extends JMenuBar {
     }
 
     private void createSettingMenu() {
-        JMenu settingMenu = new JMenu("设置");
-        JMenuItem autoSliceItem = new JCheckBoxMenuItem("自动分割");
+        JMenu settingMenu = new JMenu(I18nUtil.getMessage("settings"));
+        JMenuItem autoSliceItem = new JCheckBoxMenuItem(I18nUtil.getMessage("auto.slice"));
         settingMenu.add(autoSliceItem);
+        JMenu languageItem = new JMenu(I18nUtil.getMessage("languages"));
+        ButtonGroup bg = new ButtonGroup();
+
+        Locale currentLocale = Locale.getDefault();
+
+        JRadioButtonMenuItem zhCN = new JRadioButtonMenuItem(I18nUtil.getMessage("language.zh_CN"));
+        zhCN.addActionListener(e -> changeLocale(Locale.CHINA));
+        bg.add(zhCN);
+        languageItem.add(zhCN);
+        if (currentLocale.toString().equals("zh_CN")) {
+            zhCN.setSelected(true);
+        }
+
+        JRadioButtonMenuItem en = new JRadioButtonMenuItem(I18nUtil.getMessage("language.en"));
+        en.addActionListener(e -> changeLocale(Locale.ENGLISH));
+        bg.add(en);
+        languageItem.add(en);
+        if (currentLocale.toString().equals("en")) {
+            en.setSelected(true);
+        }
+
+        settingMenu.add(languageItem);
         add(settingMenu);
     }
+
+    private void changeLocale(Locale locale) {
+        appSetting.putByGroup(SettingConstant.KEY_LOCALE, SettingConstant.GROUP_GENERAL, locale.toString(), true);
+    }
+
 
     public void addFileListener(Consumer<List<File>> listener) {
         fileListeners.add(listener);

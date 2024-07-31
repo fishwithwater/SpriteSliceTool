@@ -1,6 +1,7 @@
 package cn.myjdemo.ui;
 
 import cn.myjdemo.domain.Rect2;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.swing.JPanel;
 import java.awt.*;
@@ -213,7 +214,7 @@ class ImagePanel extends JPanel {
         }
         // 如果有多个“图层”要注意图层的顺序
         Graphics2D g2d = ((Graphics2D) g);
-        if (!rects.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(rects)) {
             mViewG2d.setColor(Color.RED);
             for (int i = 0; i < rects.size(); i++) {
                 if (selectedRectIndex != null && selectedRectIndex == i) {

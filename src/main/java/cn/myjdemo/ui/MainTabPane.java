@@ -3,12 +3,15 @@ package cn.myjdemo.ui;
 import cn.myjdemo.domain.Rect2;
 import cn.myjdemo.sprite.SpriteService;
 import cn.myjdemo.sprite.SpriteUtil;
+import cn.myjdemo.i18n.I18nUtil;
 import com.github.weisj.darklaf.components.ClosableTabbedPane;
 import com.github.weisj.darklaf.components.TabEvent;
 import com.github.weisj.darklaf.components.TabListener;
-import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.imageio.ImageIO;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -27,8 +30,9 @@ public class MainTabPane extends ClosableTabbedPane implements TabListener {
 
     private final Map<File, JPanel> tabPanelMap = new HashMap<>();
 
-    @Setter
-    private MainFrame mainFrameRef;
+    @Autowired
+    @Qualifier("mainClickRectLabel")
+    private JLabel bottomBarLabel;
 
     public MainTabPane() {
         super();
@@ -42,7 +46,7 @@ public class MainTabPane extends ClosableTabbedPane implements TabListener {
         }
         ImagePanel imagePanel = new ImagePanel();
         imagePanel.addClickRect2Listener(rect2 -> {
-            mainFrameRef.getBottomBarLabel().setText("点击Sprite后显示坐标: " + rect2.toString());
+            bottomBarLabel.setText(I18nUtil.getMessage("click.to.show.rect.location") + ":" + rect2.toString());
         });
         BufferedImage curBufferedImg = null;
         try {

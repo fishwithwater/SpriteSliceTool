@@ -1,6 +1,7 @@
 package cn.myjdemo.ui;
 
 import cn.myjdemo.domain.ProjectFile;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -60,7 +61,7 @@ public class FileTree extends JTree {
 
     private MutableTreeNode createTreeNodeByProjectFile(ProjectFile rootFile) {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootFile);
-        if (rootFile.getChildren() != null && !rootFile.getChildren().isEmpty()) {
+        if (CollectionUtils.isNotEmpty(rootFile.getChildren())) {
             rootFile.getChildren().forEach(child -> {
                 root.add(createTreeNodeByProjectFile(child));
             });
